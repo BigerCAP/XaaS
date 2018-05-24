@@ -1,0 +1,66 @@
+====== 用s3fs挂载云储存服务器 ======
+
+
+s3fs是把Amazon S3存储服务挂载到本地硬盘或者服务器上的程序，大部分云存储和S3兼容，
+只需要修改s3fs一行代码，它就能挂载到服务器上。
+
+服务器操作系统是Centos 6.4 64位，自带的fuse版本比较老，用不了新的s3fs，所以第一件事就是：
+<code>yum remove fuse fuse* fuse-devel</code>
+
+安装s3fs过程中可能需要的包，缺啥yun啥：
+
+<code>gcc libstdc++-devel gcc-c++ curl curl* curl-devel libxml2 libxml2* libxml2-devel openssl-devel mailcap</code>
+
+开始安装新版本fuse：<code>
+wget http://sourceforge.net/projects/fuse/files/latest/download?source=files
+tar -xzvf fuse-2.9.3.tar.gz
+cd fuse-2.9.3
+./configure --prefix=/usr
+make
+make install
+export PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/lib64/pkgconfig/
+ldconfig
+modprobe fuse #可能提示有错误，不管
+pkg-config --modversion fuse</code>
+
+接着在服务器上装s3fs：
+<code>
+wget https://code.google.com/p/s3fs/downloads/detail?name=s3fs-1.74.tar.gz
+tar -xvf s3fs-1.74.tar.gz
+cd s3fs-1.74
+vim src/s3fs.cpp</code>
+
+在这个cpp中查找下面那行的内容：
+<code>
+std::string host             = "http://s3.amazonaws.com";</code>
+
+把s3.amazonaws.com替换成 你需要的地址，然后再编译：
+<code>
+./configure --prefix=/usr
+make
+make install
+</code>
+建立密匙文件：
+<code>
+vim ~/.passwd-s3fs</code>
+
+文件中内容如下：
+
+<code>AccessKeyID:AccessSecretKey</code>
+
+保存后：
+<code>
+chmod 600 ~/.passwd-s3fs</code>
+万事俱备，挂载命令如下：
+
+<code>s3fs bucket 要挂的目录 -ouse_cache=/tmp</code>
+
+如果想开机自动挂载，那就修改/etc/fstab，最下面加一行：
+
+<code>s3fs bucket 要挂的目录 fuse allow_other 0 0</code>
+
+挂载以后的好处就是方便，cp mv之类的命令总比s3cmd来的简单。
+
+----
+
+{{tag>s3fs Amazon 对象云储存}}
