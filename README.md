@@ -23,13 +23,13 @@
   - app 推
   - works app
 
-### Docs
+### Software
 
-- [s3cmd](Docs/160627-s3cmd.md)
-- [s3fs](Docs/160627-s3fs.md)
+- [用 s3cmd 挂载云储存服务](Software/160627-s3cmd.md)
+- [用 s3fs 挂载云储存服务](Software/160627-s3fs.md)
 
 ----
 
 ## About XAAS
 
-![XaaS](http://ww4.sinaimg.cn/large/90dad067gw1f4xfm4jiklg20bo09zn2n.gif)
+![XaaS](http://ww4.sinaimg.cn/large/90dad067gw1f4xfm4jiklg20bo09zn2n.gif "积金千两，不如明解经书")
